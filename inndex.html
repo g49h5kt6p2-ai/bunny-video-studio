@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunny Video Studio</title>
+<style>
+body{margin:0;background:#fff0f7;font-family:Arial,sans-serif;text-align:center;color:#683b65}
+header{background:#ff85b5;color:white;padding:18px;font-size:24px;font-weight:bold}
+main{max-width:700px;margin:auto;padding:15px}
+canvas{width:100%;border-radius:22px;background:#c8f5ff}
+button{background:#ff65a3;color:white;border:0;padding:15px 20px;border-radius:15px;font-size:17px;margin:8px;cursor:pointer}
+button:disabled{opacity:.5}
+input{padding:12px;border-radius:10px;border:1px solid pink;width:80%;max-width:400px}
+#status{font-size:17px;margin:12px}
+</style>
+</head>
+<body>
+<header>🐰 Bunny Video Studio 🎬</header>
+<main>
+<h2>Create Your Nursery Rhyme!</h2>
+<p>My First Colors Song - 60 seconds</p>
+<canvas id="stage" width="640" height="360"></canvas>
+<p id="status">Ready to dance!</p>
+<button onclick="play()">▶ Play 60 Seconds</button>
+<button onclick="stop()">■ Stop</button>
+<p>Change the video title:</p>
+<input id="title" value="Bunny's Color Dance">
+<p>Record the animation using your phone's screen recorder.</p>
+</main>
+<script>
+const canvas=document.getElementById('stage');
+const ctx=canvas.getContext('2d');
+const status=document.getElementById('status');
+let start=0,active=false,frame=0;
+const scenes=[
+['Hello, hello!','#ff9bc5','HELLO!'],
+['Red, red, red balloon!','#ff5252','RED'],
+['Blue butterfly, fly so high!','#4a9dff','BLUE'],
+['Yellow sunshine, shining bright!','#ffdf47','YELLOW'],
+['Green little frog, hop along!','#65cf75','GREEN'],
+['Pink flower, dance and sing!','#ff83bd','PINK']
+];
+function ellipse(x,y,rx,ry,color){
+ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill();
+}
+function draw(t){
+let i=Math.min(5,Math.floor(t/10));
+let s=scenes[i],bounce=Math.sin(t*6)*10;
+ctx.fillStyle='#bcefff';ctx.fillRect(0,0,640,360);
+ctx.fillStyle='#a5e7a0';ctx.fillRect(0,270,640,90);
+ellipse(520,65,37,37,'#fff6a0');
+for(let n=0;n<9;n++){
+let x=35+n*72;
+ellipse(x,300,13,13,['#ff9cc8','#ffdb58','#ffffff'][n%3]);
+}
+ctx.fillStyle='#ffffff';ctx.font='bold 28px Arial';ctx.textAlign='center';
+ctx.fillText(document.getElementById('title').value,320,40);
+let y=210+bounce;
+ellipse(280,y-90,23,70,'#ffffff');
+ellipse(360,y-90,23,70,'#ffffff');
+ellipse(280,y-90,11,53,'#ffb2ce');
+ellipse(360,y-90,11,53,'#ffb2ce');
+ellipse(320,y+40,77,75,'#ffffff');
+ellipse(320,y-30,80,76,'#ffffff');
+ellipse(292,y-42,8,11,'#444');
+ellipse(348,y-42,8,11,'#444');
+ellipse(320,y-16,10,7,'#ff91b5');
+ctx.strokeStyle='#555';ctx.lineWidth=3;ctx.beginPath();
+ctx.arc(320,y-12,15,0.15,Math.PI-.15);ctx.stroke();
+ellipse(260,y+102,33,15,'#ffffff');
+ellipse(380,y+102,33,15,'#ffffff');
+ellipse(460,175,53,53,s[1]);
+ctx.fillStyle='#ffffff';ctx.font='bold 25px Arial';
+ctx.fillText(s[2],460,183);
+ctx.fillStyle='#683b65';ctx.font='bold 25px Arial';
+ctx.fillText(s[0],320,338);
+}
+function tick(now){
+if(!active)return;
+let t=(now-start)/1000;
+if(t>=60){stop();status.textContent='Finished! Great job!';return}
+draw(t);status.textContent='Scene '+(Math.floor(t/10)+1)+' of 6 · '+Math.floor(t)+' / 60 seconds';
+frame=requestAnimationFrame(tick);
+}
+function play(){cancelAnimationFrame(frame);active=true;start=performance.now();frame=requestAnimationFrame(tick)}
+function stop(){active=false;cancelAnimationFrame(frame)}
+draw(0);
+</script>
+</body>
+</html>
